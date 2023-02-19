@@ -1,0 +1,19 @@
+#!/bin/bash
+# pre-declared variables
+Backup_Dir="/tmp/Jenkins_Backup"
+Jenkins_Home="/usr/share/jenkins"
+jenkinsURL="http://mirrors.jenkins-ci.org/war/latest/jenkins.war"
+# Stopping Current Jenkins Service
+sudo service jenkins stop
+# Sleeping to wait for file cleanup
+ping -q -c5 http://localhost:8080 > /dev/null
+# clean files
+sudo cp -f $Jenkins_Home/jenkins.war $Backup_Dir/jenkins.war.bak
+sudo rm -rf $Jenkins_Home/jenkins.war
+# Download new files
+cd $Jenkins_Home
+sudo wget "$jenkinsURL"
+# Starting new upgraded Jenkins
+sudo service jenkins start
+# Sleeping to wait for service startup
+ping -q -c5 http://localhost:8080 > /dev/null
